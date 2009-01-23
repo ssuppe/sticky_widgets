@@ -12,6 +12,7 @@
  */
 global $CONFIG;
 $widgettypes = get_widget_types();
+
 $swTypes = getSWTypes();
 $swWheres = getSWContexts();
 $owner = page_owner_entity();
@@ -123,15 +124,15 @@ foreach($swWheres as $w) {
 <!--
 // Document is ready, populate the edit panel with defaults
 $(document).ready(function(){
-	populateAll();			
+	populateAll();
 });
-  
+
 function populateWidgets(data) {
 	$("#rightcolumn_widgets").html(data.right);
 	$("#leftcolumn_widgets").html(data.left);
 	$("#middlecolumn_widgets").html(data.middle);
 	$("#widget_picker_gallery").html(data.gallery);
-	
+
 	//
 	$(this).sortable( "refresh" );
 
@@ -142,13 +143,13 @@ function populateWidgets(data) {
  document.getElementById('debugField1').value = widgetNamesLeft;
  document.getElementById('debugField2').value = widgetNamesMiddle;
  document.getElementById('debugField3').value = widgetNamesRight;
-	
+
 	// Stolen from initialise_elgg.php to re-init the draggable/droppable behaviors.
 	// WIDGET GALLERY
 	// sortable widgets
 	var els = ['#leftcolumn_widgets', '#middlecolumn_widgets', '#rightcolumn_widgets', '#widget_picker_gallery' ];
 	var $els = $(els.toString());
-	
+
 	$els.sortable({
 		items: '.draggable_widget',
 		handle: '.drag_handle',
@@ -161,23 +162,23 @@ function populateWidgets(data) {
 		start:function(e,ui) {
 			// prevent droppable drop function from running when re-sorting main lists
 			//$('#middlecolumn_widgets').droppable("disable");
-			//$('#leftcolumn_widgets').droppable("disable");	
+			//$('#leftcolumn_widgets').droppable("disable");
 		},
-		stop: function(e,ui) {	
-			// refresh list before updating hidden fields with new widget order		
+		stop: function(e,ui) {
+			// refresh list before updating hidden fields with new widget order
 			$(this).sortable( "refresh" );
-			
+
 			var widgetNamesLeft = outputWidgetList('#leftcolumn_widgets');
 			var widgetNamesMiddle = outputWidgetList('#middlecolumn_widgets');
 			var widgetNamesRight = outputWidgetList('#rightcolumn_widgets');
-			
+
 			document.getElementById('debugField1').value = widgetNamesLeft;
 			document.getElementById('debugField2').value = widgetNamesMiddle;
 			document.getElementById('debugField3').value = widgetNamesRight;
-			
+
 		}
 	});
-	
+
 	// setup hover class for dragged widgets
 	$("#rightcolumn_widgets").droppable({
 		accept: ".draggable_widget",
@@ -191,9 +192,9 @@ function populateWidgets(data) {
 		accept: ".draggable_widget",
 		hoverClass: 'droppable-hover'
 	});
-	
+
 }
- 
+
 // Get the JSON for the columns/gallery based on the current where
 function populateAll() {
 $.getJSON("<?= $vars['url'] ?>action/sticky_widgets/getWidgets",

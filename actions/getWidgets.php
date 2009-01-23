@@ -2,7 +2,7 @@
 
 /**
  * Get Widgets is the AJAXable action for getting the content that belongs in the
- * sticky_widgets customization page.  Returns left, middle, right columns, as well 
+ * sticky_widgets customization page.  Returns left, middle, right columns, as well
  * as the gallery of widgets not yet used in a nice, easy to digest JSON format.
  */
 
@@ -95,7 +95,7 @@ function drawGallery($widgettypes, $seen) {
 			$gallery .= '<h3>';
 			$gallery .= $widget->name;
 			$gallery .= '<input type="hidden" name="multiple" value="';
-				
+
 			if ((isset($widget->handler)) && (isset($widgettypes[$widget->handler]->multiple))){
 				$gallery .= $widgettypes[$widget->handler]->multiple;
 			}
