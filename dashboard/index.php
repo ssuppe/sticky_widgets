@@ -1,5 +1,10 @@
 <?php
-
+	/**
+	 * @package Elgg
+	 * @subpackage StickyWidget
+	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+	 * @author Steve Suppe <ssuppe.elgg@gmail.com>
+	 */
 	/**
 	 * Elgg dashboard
 	 * 

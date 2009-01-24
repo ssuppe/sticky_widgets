@@ -5,11 +5,18 @@
  * sticky_widgets customization page.  Returns left, middle, right columns, as well
  * as the gallery of widgets not yet used in a nice, easy to digest JSON format.
  */
+/**
+ *
+ *
+ * @package Elgg
+ * @subpackage StickyWidget
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+ * @author Steve Suppe <ssuppe.elgg@gmail.com>
+ */
 
 admin_gatekeeper();
 $type = get_input('swType');  // sticky Widget type (see types.php)
 $context = get_input('context');
-//$where = get_input('swWhere');// sticky Widget where (see types.php)
 $widgettypes = sw_get_widget_types($context);
 
 // These 'getters' have hardcoded contexts because I maintain that for uniqueness
@@ -129,10 +136,10 @@ function drawGallery($widgettypes, $seen) {
 	}
 
 
-//	$gallery .= '<br />';
+	//	$gallery .= '<br />';
 	$gallery .= '<!-- bit of space at the bottom of the widget gallery -->';
 
-//	$gallery .= '</div>';
-//	$gallery .= '<!-- /#customise_editpanel_rhs -->';
+	//	$gallery .= '</div>';
+	//	$gallery .= '<!-- /#customise_editpanel_rhs -->';
 	return $gallery;
 } ?>

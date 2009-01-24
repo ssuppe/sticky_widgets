@@ -30,15 +30,17 @@ foreach($sticky_widgets as $sticky){
 }
 $new_handlers = array_diff($handlers,$existing);
 
-if(!empty($new_handlers)){
-  foreach($new_handlers as $handler){
-    add_sticky_widget(2,$swType, $handler,$context);
-  }
-  $sticky_widgets4 = get_sticky_widgets(2,$swType,$context,0);
-  if(is_array($sticky_widgets4)){
-    $sticky_widgets = array_merge($sticky_widgets,$sticky_widgets4);
-  }
-}
+// SPS: Unsure why we should do it this way - I only want to create SW objects if we
+// need them.  If removed from the configuration, they should not show up here.
+//if(!empty($new_handlers)){
+//  foreach($new_handlers as $handler){
+//    add_sticky_widget(2,$swType, $handler,$context);
+//  }
+//  $sticky_widgets4 = get_sticky_widgets(2,$swType,$context,0);
+//  if(is_array($sticky_widgets4)){
+//    $sticky_widgets = array_merge($sticky_widgets,$sticky_widgets4);
+//  }
+//}
 
 foreach($sticky_widgets as $widget){
   echo elgg_view_entity($widget);

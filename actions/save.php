@@ -1,7 +1,15 @@
 <?php
+	/**
+	 * 	 * Elgg sticky widgets widget save action
+	 * 
+	 *
+	 * @package Elgg
+	 * @subpackage StickyWidget
+	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+	 * @author Steve Suppe <ssuppe.elgg@gmail.com>
+	 */
 
 	/**
-	 * Elgg sticky widgets widget save action
 	 *
 	 * @package Elgg
 	 * @subpackage StickyWidgets

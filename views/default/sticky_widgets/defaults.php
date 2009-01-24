@@ -12,6 +12,9 @@ global $CONFIG;
 $widgets = sw_get_widget_types();
 
 ?>
+<h1>Currently not functioning.  Needs to be done! (See Wiki or docs dir for thoughts).</h1>
+<script type="text/javascript">
+</script>
 <div id="sticky-widgets-subtypes">
 
 <ul>

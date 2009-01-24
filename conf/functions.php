@@ -1,5 +1,11 @@
 <?php
 /**
+ * @package Elgg
+ * @subpackage StickyWidget
+ * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
+ * @author Steve Suppe <ssuppe.elgg@gmail.com>
+ */
+/**
  * All of the functions here were 'borrowed' from the Elgg site and customized
  * to work for sticky_widgets.  Subsequently, all function calls to the originals
  * in the actions/views have been replaced with these.
@@ -14,10 +20,10 @@
  *
  */
 class StickyElggWidget extends ElggWidget  {
-  protected function initialise_attributes() {
-    parent::initialise_attributes();
-    $this->attributes['subtype'] = 'sticky_widget';
-  }
+	protected function initialise_attributes() {
+		parent::initialise_attributes();
+		$this->attributes['subtype'] = 'sticky_widget';
+	}
 }
 
 /**
@@ -30,37 +36,37 @@ class StickyElggWidget extends ElggWidget  {
  * @param int $column The column to display this widget in (1, 2 or 3)
  * @return true|false Depending on success
  */
-function add_sticky_widget($user_guid, $swType, $handler, $context, $order = 0, $column = 0) {
+function add_sticky_widget($user_guid, $swType, $handler, $context, $order = 0, $column = 1) {
 
-  if (empty($user_guid) || empty($context) || empty($handler) || !widget_type_exists($handler))
-  return false;
+	if (empty($user_guid) || empty($context) || empty($handler) || !widget_type_exists($handler))
+	return false;
 
-  if ($user = get_user($user_guid)) {
+	if ($user = get_user($user_guid)) {
 
-    $widget = new StickyElggWidget;
-    $widget->owner_guid = $user_guid;
-    $widget->container_guid = $user_guid;
-    $widget->access_id = 2; // This because whent the user is offline you need to access this data
-    $ctx = get_context();
-    set_context('add_sticky_widgets');
-    if (!$widget->save()){
-      set_context($ctx);
-      return false;
-    }
-    set_context($ctx);
+		$widget = new StickyElggWidget;
+		$widget->owner_guid = $user_guid;
+		$widget->container_guid = $user_guid;
+		$widget->access_id = 2; // This because whent the user is offline you need to access this data
+		$ctx = get_context();
+		set_context('add_sticky_widgets');
+		if (!$widget->save()){
+			set_context($ctx);
+			return false;
+		}
+		set_context($ctx);
 
-    $widget->handler = $handler;
-    $widget->context = $context;
-    $widget->column = $column;
-    $widget->order = $order;
-    $widget->swType = $swType;
-    //		$widget->swWhere = $swWhere;
-    // save_widget_location($widget, $order, $column);
-    return true;
+		$widget->handler = $handler;
+		$widget->context = $context;
+		$widget->column = $column;
+		$widget->order = $order;
+		$widget->swType = $swType;
+		//		$widget->swWhere = $swWhere;
+		// save_widget_location($widget, $order, $column);
+		return true;
 
-  }
+	}
 
-  return false;
+	return false;
 
 }
 
@@ -73,36 +79,36 @@ function add_sticky_widget($user_guid, $swType, $handler, $context, $order = 0, 
  */
 function save_sticky_widget_info($widget_guid, $params,$context="profile") {
 
-  if ($widget = get_entity($widget_guid)) {
-    $subtype = $widget->getSubtype();
-    if ($subtype != "sticky_widget") {return false;}
-    $handler = $widget->handler;
-    if (empty($handler) || !widget_type_exists($handler)) {return false;}
+	if ($widget = get_entity($widget_guid)) {
+		$subtype = $widget->getSubtype();
+		if ($subtype != "sticky_widget") {return false;}
+		$handler = $widget->handler;
+		if (empty($handler) || !widget_type_exists($handler)) {return false;}
 
-    if (!$widget->canEdit()) return false;
-    // Save the params to the widget
-    if (is_array($params) && sizeof($params) > 0) {
-      foreach($params as $name => $value) {
-        if (!empty($name) && !in_array($name,array('guid','owner_guid','site_guid'))) {
-          if (is_array($value))
-          {
-            // TODO: Handle arrays securely
-            $widget->setMetaData($name, $value, "", true);
-          }else
-          $widget->$name = $value;
-        }
-      }
-      $c = get_context();
-      set_context('add_sticky_widgets');
-      $widget->save();
-      set_context($c);
-      setSWMasterTimestamp($context);
-    }
+		if (!$widget->canEdit()) return false;
+		// Save the params to the widget
+		if (is_array($params) && sizeof($params) > 0) {
+			foreach($params as $name => $value) {
+				if (!empty($name) && !in_array($name,array('guid','owner_guid','site_guid'))) {
+					if (is_array($value))
+					{
+						// TODO: Handle arrays securely
+						$widget->setMetaData($name, $value, "", true);
+					}else
+					$widget->$name = $value;
+				}
+			}
+			$c = get_context();
+			set_context('add_sticky_widgets');
+			$widget->save();
+			set_context($c);
+			setSWMasterTimestamp($context);
+		}
 
-    $function = "save_{$handler}_widget";
-    return true;
-  }
-  return false;
+		$function = "save_{$handler}_widget";
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -113,43 +119,36 @@ function save_sticky_widget_info($widget_guid, $params,$context="profile") {
  * @param int $column The column (1 or 2)
  * @return array|false An array of widget ElggObjects, or false
  */
-function get_sticky_widgets($user_guid, $swType,$context, $column=null,$handler=null) {
-  $params = array();
-  $params["context"] = $context;
-  $params["swType"]=$swType;
-  // Added this for let the function be more versatile
-  if($column!=null){
-    $params["column"]=$column;
-  }
-  if($handler!=null){
-    $params["handler"]=$handler;
-  }
+function get_sticky_widgets($user_guid, $swType,$context, $column=1) {
+	$params = array();
+	$params["context"] = $context;
+	$params["swType"] = $swType;
 
-  if ($widgets = get_entities_from_private_setting_multi($params, "object", "sticky_widget", $user_guid, "", 10000))
-  /* if ($widgets = get_user_objects_by_metadata($user_guid, "widget", array(
-   'column' => $column,
-   'context' => 'admin',
-   'swType' => $swType
-   ), 10000))*/
+	// Added this for let the function be more versatile
+	if($column!=null){
+		$params["column"]=$column;
+	}
 
-  {
+	if ($widgets = get_entities_from_private_setting_multi($params, "object", "sticky_widget", $user_guid, "", 10000))
+	//	if ($widgets = get_user_objects_by_metadata($user_guid, "sticky_widget",$params, 10000))
+	{
 
-    $widgetorder = array();
-    foreach($widgets as $widget) {
-      $order = $widget->order;
-      while(isset($widgetorder[$order])) {
-        $order++;
-      }
-      $widgetorder[$order] = $widget;
-    }
+		$widgetorder = array();
+		foreach($widgets as $widget) {
+			$order = $widget->order;
+			while(isset($widgetorder[$order])) {
+				$order++;
+			}
+			$widgetorder[$order] = $widget;
+		}
 
-    ksort($widgetorder);
+		ksort($widgetorder);
 
-    return $widgetorder;
+		return $widgetorder;
 
-  }
+	}
 
-  return false;
+	return false;
 
 }
 
@@ -163,31 +162,31 @@ function get_sticky_widgets($user_guid, $swType,$context, $column=null,$handler=
  */
 function sw_get_widget_types($widget_context = 'ignore') {
 
-  global $CONFIG;
-  if (!empty($CONFIG->widgets)
-  && !empty($CONFIG->widgets->handlers)
-  && is_array($CONFIG->widgets->handlers)) {
+	global $CONFIG;
+	if (!empty($CONFIG->widgets)
+	&& !empty($CONFIG->widgets->handlers)
+	&& is_array($CONFIG->widgets->handlers)) {
 
-    //					$context = get_context();
+		//					$context = get_context();
 
-    foreach($CONFIG->widgets->handlers as $key => $handler) {
-      if (!in_array('all',$handler->context) &&
-      !in_array($widget_context,$handler->context) &&
-      sw_shouldIgnore() != true) {
-        unset($CONFIG->widgets->handlers[$key]);
-      }
-    }
+		foreach($CONFIG->widgets->handlers as $key => $handler) {
+			if (!in_array('all',$handler->context) &&
+			!in_array($widget_context,$handler->context) &&
+			sw_shouldIgnore() != true) {
+				unset($CONFIG->widgets->handlers[$key]);
+			}
+		}
 
-    return $CONFIG->widgets->handlers;
+		return $CONFIG->widgets->handlers;
 
-  }
+	}
 
-  return array();
+	return array();
 
 }
 
 function sw_shouldIgnore() {
-  return true;
+	return true;
 }
 
 /**
@@ -197,21 +196,21 @@ function sw_shouldIgnore() {
  * @return int of the current time
  */
 function getSWMasterTimestamp($context) {
-  $timestamps = get_entities("object", "sw_master_timestamp", 2);
-  $timestamp = "";
-  if(!empty($timestamps)){
-    foreach($timestamps as $t) {
-      if($t->description == $context) {
-        $timestamp = $t;
-        break;
-      }
-    }
-  }
-  if(empty($timestamp)) {
-    return -1;
-  } else {
-    return $timestamp->time_updated;
-  }
+	$timestamps = get_entities("object", "sw_master_timestamp", 2);
+	$timestamp = "";
+	if(!empty($timestamps)){
+		foreach($timestamps as $t) {
+			if($t->description == $context) {
+				$timestamp = $t;
+				break;
+			}
+		}
+	}
+	if(empty($timestamp)) {
+		return -1;
+	} else {
+		return $timestamp->time_updated;
+	}
 }
 
 /**
@@ -220,33 +219,33 @@ function getSWMasterTimestamp($context) {
  * @param unknown_type $context
  */
 function setSWMasterTimestamp($context) {
-  $timestamps = get_entities("object", "sw_master_timestamp", 2);
-  $timestamp = "";
-  if(!empty($timestamps)){
-    foreach($timestamps as $t) {
-      if($t->description == $context) {
-        $timestamp = $t;
-        break;
-      }
-    }
-  }
+	$timestamps = get_entities("object", "sw_master_timestamp", 2);
+	$timestamp = "";
+	if(!empty($timestamps)){
+		foreach($timestamps as $t) {
+			if($t->description == $context) {
+				$timestamp = $t;
+				break;
+			}
+		}
+	}
 
-  if(empty($timestamp)) {
-    $timestamp = new ElggObject();
-    $timestamp->owner_guid = 2;
-    $timestamp->container_guid = 2;
-    $timestamp->subtype = 'sw_master_timestamp';
-    $timestamp->access_id = 2;
-    $timestamp->title = "SW Master Timestamp";
-    $timestamp->description = $context;
-    //		$timestamp->save();
-  }
-  $ctx = get_context();
-  set_context('add_sticky_widgets');
-  $timestamp->save();
-  set_context($ctx);
+	if(empty($timestamp)) {
+		$timestamp = new ElggObject();
+		$timestamp->owner_guid = 2;
+		$timestamp->container_guid = 2;
+		$timestamp->subtype = 'sw_master_timestamp';
+		$timestamp->access_id = 2;
+		$timestamp->title = "SW Master Timestamp";
+		$timestamp->description = $context;
+		//		$timestamp->save();
+	}
+	$ctx = get_context();
+	set_context('add_sticky_widgets');
+	$timestamp->save();
+	set_context($ctx);
 
-  //	return $timestamp->time_updated;
+	//	return $timestamp->time_updated;
 }
 
 /**
@@ -257,23 +256,23 @@ function setSWMasterTimestamp($context) {
  * @return unknown
  */
 function getSWTimestampForUser($guid, $context) {
-  $timestamps = get_entities("object", "sw_timestamp", $guid);
-  $timestamp = "";
-  if(!empty($timestamps)){
-    foreach($timestamps as $t) {
-      if($t->description == $context) {
-        $timestamp = $t;
-        break;
-      }
-    }
-  }
+	$timestamps = get_entities("object", "sw_timestamp", $guid);
+	$timestamp = "";
+	if(!empty($timestamps)){
+		foreach($timestamps as $t) {
+			if($t->description == $context) {
+				$timestamp = $t;
+				break;
+			}
+		}
+	}
 
-  if(empty($timestamp)) {
-    // Guaranteed to alwys be less than the current time
-    return -1;
-  }  else {
-    return $timestamp->time_updated;
-  }
+	if(empty($timestamp)) {
+		// Guaranteed to alwys be less than the current time
+		return -1;
+	}  else {
+		return $timestamp->time_updated;
+	}
 }
 
 /**
@@ -284,34 +283,34 @@ function getSWTimestampForUser($guid, $context) {
  * @return unknown
  */
 function setSWTimestampForUser($guid, $context) {
-  $timestamps = get_entities("object", "sw_timestamp", $guid);
-  $timestamp = "";
-  if(!empty($timestamps)){
-    foreach($timestamps as $t) {
-      if($t->description == $context) {
-        $timestamp = $t;
-        break;
-      }
-    }
-  }
+	$timestamps = get_entities("object", "sw_timestamp", $guid);
+	$timestamp = "";
+	if(!empty($timestamps)){
+		foreach($timestamps as $t) {
+			if($t->description == $context) {
+				$timestamp = $t;
+				break;
+			}
+		}
+	}
 
-  if(empty($timestamp)) {
-    $timestamp = new ElggObject();
-    $timestamp->owner_guid = $guid;
-    $timestamp->container_guid = $guid;
-    $timestamp->subtype = 'sw_timestamp';
-    $timestamp->access_id = 2;
-    $timestamp->title = "SW Timestamp";
-    $timestamp->description = $context;
+	if(empty($timestamp)) {
+		$timestamp = new ElggObject();
+		$timestamp->owner_guid = $guid;
+		$timestamp->container_guid = $guid;
+		$timestamp->subtype = 'sw_timestamp';
+		$timestamp->access_id = 2;
+		$timestamp->title = "SW Timestamp";
+		$timestamp->description = $context;
 
-  }
-  $ctx = get_context();
-  set_context('add_sticky_widgets');
-  $timestamp->save();
-  set_context($ctx);
+	}
+	$ctx = get_context();
+	set_context('add_sticky_widgets');
+	$timestamp->save();
+	set_context($ctx);
 
-  //	$timestamp->description = time();
-  return $timestamp->time_updated;
+	//	$timestamp->description = time();
+	return $timestamp->time_updated;
 }
 
 /**
@@ -323,10 +322,10 @@ function setSWTimestampForUser($guid, $context) {
  * @param unknown_type $params
  */
 function sticky_widgets_container_permission_check($hook, $entity_type, $returnvalue, $params) {
-  if(get_context() == 'add_sticky_widgets') {
-    return true;
-  }
-  return false;
+	if(get_context() == 'add_sticky_widgets') {
+		return true;
+	}
+	return $returnvalue;
 }
 
 /******************************** Stycky Widget configuration functions **************************/
@@ -346,115 +345,111 @@ function sticky_widgets_container_permission_check($hook, $entity_type, $returnv
  */
 function reorder_sticky_widgets_from_panel($panelstring1, $panelstring2, $panelstring3, $context, $owner = 2, $swType) {
 
-  $return = true;
+	$return = true;
 
-  $mainwidgets = explode('::',$panelstring1);
-  $sidewidgets = explode('::',$panelstring2);
-  $rightwidgets = explode('::',$panelstring3);
+	$mainwidgets = explode('::',$panelstring1);
+	$sidewidgets = explode('::',$panelstring2);
+	$rightwidgets = explode('::',$panelstring3);
 
-  $handlers = array();
-  $guids = array();
+	$handlers = array();
+	$guids = array();
 
-  // First, lookup our 'timestamp' for sticky_widgets and check
-  // to see if the user's timestamp is equal to or later.
+	// First, lookup our 'timestamp' for sticky_widgets and check
+	// to see if the user's timestamp is equal to or later.
 
-  if (is_array($mainwidgets) && sizeof($mainwidgets) > 0) {
-    foreach($mainwidgets as $widget) {
+	if (is_array($mainwidgets) && sizeof($mainwidgets) > 0) {
+		foreach($mainwidgets as $widget) {
 
-      $guid = (int) $widget;
+			$guid = (int) $widget;
 
-      if ("{$guid}" == "{$widget}") {
-        $guids[1][] = $widget;
-      } else {
-        $handlers[1][] = $widget;
-      }
+			if ("{$guid}" == "{$widget}") {
+				$guids[1][] = $widget;
+			} else {
+				$handlers[1][] = $widget;
+			}
 
-    }
-  }
-  if (is_array($sidewidgets) && sizeof($sidewidgets) > 0) {
-    foreach($sidewidgets as $widget) {
+		}
+	}
+	if (is_array($sidewidgets) && sizeof($sidewidgets) > 0) {
+		foreach($sidewidgets as $widget) {
 
-      $guid = (int) $widget;
+			$guid = (int) $widget;
 
-      if ("{$guid}" == "{$widget}") {
-        $guids[2][] = $widget;
-      } else {
-        $handlers[2][] = $widget;
-      }
+			if ("{$guid}" == "{$widget}") {
+				$guids[2][] = $widget;
+			} else {
+				$handlers[2][] = $widget;
+			}
 
-    }
-  }
-  if (is_array($rightwidgets) && sizeof($rightwidgets) > 0) {
-    foreach($rightwidgets as $widget) {
+		}
+	}
+	if (is_array($rightwidgets) && sizeof($rightwidgets) > 0) {
+		foreach($rightwidgets as $widget) {
 
-      $guid = (int) $widget;
+			$guid = (int) $widget;
 
-      if ("{$guid}" == "{$widget}") {
-        $guids[3][] = $widget;
-      } else {
-        $handlers[3][] = $widget;
-      }
+			if ("{$guid}" == "{$widget}") {
+				$guids[3][] = $widget;
+			} else {
+				$handlers[3][] = $widget;
+			}
 
-    }
-  }
+		}
+	}
 
-  // Reorder existing widgets or delete ones that have vanished
-  foreach (array(1,2,3) as $column) {
-    if ($dbwidgets = get_sticky_widgets($owner, $swType, $context,$column)) {
+	// Reorder existing widgets or delete ones that have vanished
+	foreach (array(1,2,3) as $column) {
+		if ($dbwidgets = get_sticky_widgets($owner, $swType, $context,$column)) {
 
-      foreach($dbwidgets as $dbwidget) {
-        if ((is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) ||
-        (is_array($guids[2]) && in_array($dbwidget->getGUID(),$guids[2])) ||
-        (is_array($guids[3]) && in_array($dbwidget->getGUID(),$guids[3])) ){
-          if (is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) {
-            $pos = array_search($dbwidget->getGUID(),$guids[1]);
-            $col = 1;
-          } else if (is_array($guids[2]) && in_array($dbwidget->getGUID(),$guids[2])) {
-            $pos = array_search($dbwidget->getGUID(),$guids[2]);
-            $col = 2;
-          } else if (is_array($guids[3])){
-            $pos = array_search($dbwidget->getGUID(),$guids[3]);
-            $col = 3;
-          }
-          $pos = ($pos + 1) * 10;
-          $dbwidget->column = $col;
-          $dbwidget->order = $pos;
-        } else if($column!=0) {
-          $dbguid = $dbwidget->getGUID();
-          if (!$dbwidget->delete()) {
-            $return = false;
-          } else {
-            // Remove state cookie
-            setcookie('widget' + $dbguid, null);
-          }
-        }
-      }
+			foreach($dbwidgets as $dbwidget) {
+				if ((is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) ||
+				(is_array($guids[2]) && in_array($dbwidget->getGUID(),$guids[2])) ||
+				(is_array($guids[3]) && in_array($dbwidget->getGUID(),$guids[3])) ){
+					if (is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) {
+						$pos = array_search($dbwidget->getGUID(),$guids[1]);
+						$col = 1;
+					} else if (is_array($guids[2]) && in_array($dbwidget->getGUID(),$guids[2])) {
+						$pos = array_search($dbwidget->getGUID(),$guids[2]);
+						$col = 2;
+					} else if (is_array($guids[3])){
+						$pos = array_search($dbwidget->getGUID(),$guids[3]);
+						$col = 3;
+					}
+					$pos = ($pos + 1) * 10;
+					$dbwidget->column = $col;
+					$dbwidget->order = $pos;
+				} else if($column!=0) {
+					$dbguid = $dbwidget->getGUID();
+					if (!$dbwidget->delete()) {
+						$return = false;
+					} else {
+						// Remove state cookie
+						setcookie('widget' + $dbguid, null);
+					}
+				}
+			}
 
-    }
-    // Add new ones
-    if (sizeof($guids[$column]) > 0) {
-      foreach($guids[$column] as $key => $guid) {
-        if ($guid == 0) {
-          $pos = ($key + 1) * 10;
-          $handler = $handlers[$column][$key];
-          $params = array('column' => 0,'context' => $context,'swType' => $swType,"handler"=>$handler);
-          $widgets = get_sticky_widgets($owner,$swType,$context,null,$handler);
-          if(!empty($widgets)){
-            foreach($widgets as $w){
-              $w->order = $pos;
-              $w->column = $column;
-              $w->save();
-            }
-          }
-          else{
-            $return = false;
-          }
-        }
-      }
-    }
-  }
-  setSWMasterTimestamp($context);
-  return $return;
+		}
+		// Add new ones
+		if (sizeof($guids[$column]) > 0) {
+			foreach($guids[$column] as $key => $guid) {
+				if ($guid == 0) {
+					$pos = ($key + 1) * 10;
+					$handler = $handlers[$column][$key];
+
+					if (!add_sticky_widget($owner,$swType, $handler,$context,$pos,$column))
+					$return = false;
+
+				}
+				//				else{
+				//					$return = false;
+				//				}
+			}
+
+		}
+	}
+	setSWMasterTimestamp($context);
+	return $return;
 }
 
 /**
@@ -467,19 +462,19 @@ function reorder_sticky_widgets_from_panel($panelstring1, $panelstring2, $panels
  */
 function sw_elgg_view_layout($layout) {
 
-  $arg = 1;
-  $param_array = array();
-  while ($arg < func_num_args()-2) {
-    $param_array['area' . $arg] = func_get_arg($arg);
-    $arg++;
-  }
-  $param_array['swType'] = func_get_arg($arg++);
-  //	$param_array['swWhere'] = func_get_arg($arg);
-  if (elgg_view_exists("canvas/layouts/{$layout}")) {
-    return elgg_view("canvas/layouts/{$layout}",$param_array);
-  } else {
-    return elgg_view("canvas/default",$param_array);
-  }
+	$arg = 1;
+	$param_array = array();
+	while ($arg < func_num_args()-2) {
+		$param_array['area' . $arg] = func_get_arg($arg);
+		$arg++;
+	}
+	$param_array['swType'] = func_get_arg($arg++);
+	//	$param_array['swWhere'] = func_get_arg($arg);
+	if (elgg_view_exists("canvas/layouts/{$layout}")) {
+		return elgg_view("canvas/layouts/{$layout}",$param_array);
+	} else {
+		return elgg_view("canvas/default",$param_array);
+	}
 
 }
 
@@ -498,52 +493,46 @@ function sw_elgg_view_layout($layout) {
  * @return unknown
  */
 function get_user_widgets_from_sticky($user_guid, $swType, $context) {
-  // First, let's do a compare of the last updated 'sticky_widgets'
-  // to this user's SW Timestamp...
-  // The ordering here is on purpose, because for uninitialized states,
-  // you would want the master first
-  $uTime = getSWTimestampForUser($user_guid, $context);
+	// First, let's do a compare of the last updated 'sticky_widgets'
+	// to this user's SW Timestamp...
+	$uTime = getSWTimestampForUser($user_guid, $context);
+	$mTime = getSWMasterTimestamp($context);
 
-  $mTime = getSWMasterTimestamp($context);
-  //	if($mTime < 0) {
-  //		setSWMasterTimestamp($context);
-  //		$mTime = getSWMasterTimestamp($context);
-  //	}
-  // If there was no mTime, then there has been no save, so continue to
-  // use the default widgets;
-  if($mTime > 0 && $uTime <= $mTime) {
-    $widgetspanel = array();
-    foreach (array(1,2,3) as $column) {
-      // First, get the STICKY widgets for this column/context
-      $swidgets = get_sticky_widgets(2,$swType,$context,$column);
-      // Create the necessary string to pass to the reorder panel
-      $w = "";
-      $i = 0;
-      if(!empty($swidgets)){
-        foreach($swidgets as $sw) {
-          //			$sw = $swidgets[$i];
-          $w = $w . $sw->handler . "::" . 0;
-          if($i != (sizeof($swidgets) -1)) {
-            $w .= "::";
-            $i++;
-          }
-        }
-      }
-      $widgetspanel[] = $w;
-    }
-    $ctx = get_context();
-    set_context('add_sticky_widgets');
-    if(!reorder_widgets_from_panel_via_sticky($widgetspanel[0], $widgetspanel[1], $widgetspanel[2], $context, $user_guid)) {
-      system_message(elgg_echo('sw:usercheck:fail'));
-    }
-    set_context($ctx);
-    setSWTimestampForUser($user_guid, $context);
-  }
+	// If there was no mTime, then there has been no save, so continue to
+	// use the default widgets;
+	if($mTime > 0 && $uTime <= $mTime) {
+		$widgetspanel = array();
+		foreach (array(1,2,3) as $column) {
+			// First, get the STICKY widgets for this column/context
+			$swidgets = get_sticky_widgets(2,$swType,$context,$column);
+			// Create the necessary string to pass to the reorder panel
+			$w = "";
+			$i = 0;
+			if(!empty($swidgets)){
+				foreach($swidgets as $sw) {
+					//			$sw = $swidgets[$i];
+					$w = $w . $sw->handler . "::" . 0;
+					if($i != (sizeof($swidgets) -1)) {
+						$w .= "::";
+						$i++;
+					}
+				}
+			}
+			$widgetspanel[] = $w;
+		}
+		$ctx = get_context();
+		set_context('add_sticky_widgets');
+		if(!reorder_widgets_from_panel_via_sticky($widgetspanel[0], $widgetspanel[1], $widgetspanel[2], $context, $user_guid)) {
+			system_message(elgg_echo('sw:usercheck:fail'));
+		}
+		set_context($ctx);
+		setSWTimestampForUser($user_guid, $context);
+	}
 
-  $widgets[0] = get_widgets($user_guid, $context,1);
-  $widgets[1] = get_widgets($user_guid, $context,2);
-  $widgets[2] = get_widgets($user_guid, $context,3);
-  return $widgets;
+	$widgets[0] = get_widgets($user_guid, $context,1);
+	$widgets[1] = get_widgets($user_guid, $context,2);
+	$widgets[2] = get_widgets($user_guid, $context,3);
+	return $widgets;
 }
 
 
@@ -559,50 +548,37 @@ function get_user_widgets_from_sticky($user_guid, $swType, $context) {
  */
 function add_widget_via_sticky($user_guid, $handler, $context, $order = 0, $column = 1) {
 
-  if (empty($user_guid) || empty($context) || empty($handler) || !widget_type_exists($handler)){
-    return false;
-  }
+	if (empty($user_guid) || empty($context) || empty($handler) || !widget_type_exists($handler))
+	return false;
 
-  if ($user = get_user($user_guid)) {
-    //@todo Add support for other subtypes
-    $sw_widgets = get_sticky_widgets(2,"default",$context,$column,$handler);
+	if ($user = get_user($user_guid)) {
 
-    if(!empty($sw_widgets)){
-      foreach($sw_widgets as $sw_widget){
-        $widget = new ElggWidget;
-        $widget->owner_guid = $user_guid;
-        $widget->access_id = $sw_widget->user_access_id;
-        $widget->container_guid = $user_guid;
+		$widget = new ElggWidget;
+		$widget->owner_guid = $user_guid;
+		$widget->access_id = 1;
+		$widget->container_guid = $user_guid;
+		$ctx = get_context();
+		set_context('add_sticky_widgets');
+		if (!$widget->save()){
+			set_context($ctx);
+			return false;
+		}
+		set_context($ctx);
 
-        $ctx = get_context();
-        set_context('add_sticky_widgets');
-        if (!$widget->save()){
-          set_context($ctx);
-          return false;
-        }
-        set_context($ctx);
+		$widget->handler = $handler;
+		$widget->context = $context;
+		$widget->column = $column;
+		$widget->order = $order;
 
-        $widget->handler = $handler;
-        $widget->context = $context;
-        $widget->column = $column;
-        $widget->order = $order;
+		// save_widget_location($widget, $order, $column);
+		return true;
 
-        //@todo I didn't know how to extract this data from the object itself
-        $params = array("limit","num_display","gallery_list","icon_size");
-        foreach($params as $key){
-          $value = $sw_widget->get($key);
-          if(!empty($value)){
-            $widget->set($key,$value);
-          }
-        }
-        set_context($ctx);
-        // save_widget_location($widget, $order, $column);
-        return true;
-      }
-    }
-  }
-  return false;
+	}
+
+	return false;
+
 }
+
 
 /**
  * Reorder 'normal' (user) widgets BASED on sticky widgets
@@ -614,105 +590,106 @@ function add_widget_via_sticky($user_guid, $handler, $context, $order = 0, $colu
  * @param unknown_type $owner
  * @return unknown
  */
+
+
 function reorder_widgets_from_panel_via_sticky($panelstring1, $panelstring2, $panelstring3, $context, $owner) {
 
-  $return = true;
+	$return = true;
 
-  $mainwidgets = explode('::',$panelstring1);
-  $sidewidgets = explode('::',$panelstring2);
-  $rightwidgets = explode('::',$panelstring3);
+	$mainwidgets = explode('::',$panelstring1);
+	$sidewidgets = explode('::',$panelstring2);
+	$rightwidgets = explode('::',$panelstring3);
 
-  $handlers = array();
-  $guids = array();
+	$handlers = array();
+	$guids = array();
 
-  if (is_array($mainwidgets) && sizeof($mainwidgets) > 0) {
-    foreach($mainwidgets as $widget) {
+	if (is_array($mainwidgets) && sizeof($mainwidgets) > 0) {
+		foreach($mainwidgets as $widget) {
 
-      $guid = (int) $widget;
+			$guid = (int) $widget;
 
-      if ("{$guid}" == "{$widget}") {
-        $guids[1][] = $widget;
-      } else {
-        $handlers[1][] = $widget;
-      }
+			if ("{$guid}" == "{$widget}") {
+				$guids[1][] = $widget;
+			} else {
+				$handlers[1][] = $widget;
+			}
 
-    }
-  }
-  if (is_array($sidewidgets) && sizeof($sidewidgets) > 0) {
-    foreach($sidewidgets as $widget) {
+		}
+	}
+	if (is_array($sidewidgets) && sizeof($sidewidgets) > 0) {
+		foreach($sidewidgets as $widget) {
 
-      $guid = (int) $widget;
+			$guid = (int) $widget;
 
-      if ("{$guid}" == "{$widget}") {
-        $guids[2][] = $widget;
-      } else {
-        $handlers[2][] = $widget;
-      }
+			if ("{$guid}" == "{$widget}") {
+				$guids[2][] = $widget;
+			} else {
+				$handlers[2][] = $widget;
+			}
 
-    }
-  }
-  if (is_array($rightwidgets) && sizeof($rightwidgets) > 0) {
-    foreach($rightwidgets as $widget) {
+		}
+	}
+	if (is_array($rightwidgets) && sizeof($rightwidgets) > 0) {
+		foreach($rightwidgets as $widget) {
 
-      $guid = (int) $widget;
+			$guid = (int) $widget;
 
-      if ("{$guid}" == "{$widget}") {
-        $guids[3][] = $widget;
-      } else {
-        $handlers[3][] = $widget;
-      }
+			if ("{$guid}" == "{$widget}") {
+				$guids[3][] = $widget;
+			} else {
+				$handlers[3][] = $widget;
+			}
 
-    }
-  }
+		}
+	}
 
-  // Reorder existing widgets or delete ones that have vanished
-  foreach (array(1,2,3) as $column) {
-    if ($dbwidgets = get_widgets($owner,$context,$column)) {
-      foreach($dbwidgets as $dbwidget) {
-        if ((is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) ||
-        (is_array($guids[2]) && in_array($dbwidget->getGUID(),$guids[2])) ||
-        (is_array($guids[3]) && in_array($dbwidget->getGUID(),$guids[3])) ){
+	// Reorder existing widgets or delete ones that have vanished
+	foreach (array(1,2,3) as $column) {
+		if ($dbwidgets = get_widgets($owner,$context,$column)) {
+			foreach($dbwidgets as $dbwidget) {
+				if ((is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) ||
+				(is_array($guids[2]) && in_array($dbwidget->getGUID(),$guids[2])) ||
+				(is_array($guids[3]) && in_array($dbwidget->getGUID(),$guids[3])) ){
 
-          if (is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) {
-            $pos = array_search($dbwidget->getGUID(),$guids[1]);
-            $col = 1;
-          } else if (is_array($guids[2]) &&  in_array($dbwidget->getGUID(),$guids[2])) {
-            $pos = array_search($dbwidget->getGUID(),$guids[2]);
-            $col = 2;
-          } else if(is_array($guids[3])){
-            $pos = array_search($dbwidget->getGUID(),$guids[3]);
-            $col = 3;
-          }
-          $pos = ($pos + 1) * 10;
-          $dbwidget->column = $col;
-          $dbwidget->order = $pos;
-          $sw_widget = get_sticky_widgets(2,$swType,$context);
-        } else {
-          $dbguid = $dbwidget->getGUID();
-          if (!$dbwidget->delete()) {
-            //						$return = false;
-          } else {
-            // Remove state cookie
-            setcookie('widget' + $dbquid, null);
-          }
-        }
-      }
+					if (is_array($guids[1]) && in_array($dbwidget->getGUID(),$guids[1])) {
+						$pos = array_search($dbwidget->getGUID(),$guids[1]);
+						$col = 1;
+					} else if (is_array($guids[2]) &&  in_array($dbwidget->getGUID(),$guids[2])) {
+						$pos = array_search($dbwidget->getGUID(),$guids[2]);
+						$col = 2;
+					} else if(is_array($guids[3])){
+						$pos = array_search($dbwidget->getGUID(),$guids[3]);
+						$col = 3;
+					}
+					$pos = ($pos + 1) * 10;
+					$dbwidget->column = $col;
+					$dbwidget->order = $pos;
+				} else {
+					$dbguid = $dbwidget->getGUID();
+					if (!$dbwidget->delete()) {
+						//						$return = false;
+					} else {
+						// Remove state cookie
+						setcookie('widget' + $dbguid, null);
+					}
+				}
+			}
 
-    }
-    // Add new ones
-    if (sizeof($guids[$column]) > 0) {
-      foreach($guids[$column] as $key => $guid) {
-        if ($guid == 0) {
-          $pos = ($key + 1) * 10;
-          $handler = $handlers[$column][$key];
-          if (!add_widget_via_sticky($owner,$handler,$context,$pos,$column))
-          $return = false;
-        }
-      }
-    }
-  }
+		}
+		// Add new ones
+		if (sizeof($guids[$column]) > 0) {
+			foreach($guids[$column] as $key => $guid) {
+				if ($guid == 0) {
+					$pos = ($key + 1) * 10;
+					$handler = $handlers[$column][$key];
+					if (!add_widget_via_sticky($owner,$handler,$context,$pos,$column))
+					$return = false;
+				}
+			}
+		}
+	}
 
-  return $return;
+	return $return;
 
 }
 

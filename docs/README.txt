@@ -73,3 +73,8 @@ CHANGELOG
 	* Fixed some permissions problems with updating widgets for other users (such as
 	  when you are visiting their profile and they need to update according to Sticky 
 	  widgets).
+	  
+0.6.3 : 25 Jan 2009 :
+	* Accepts many of Diego Andrés Ramírez Aragón's re-org modifications (thanks!) and also kept his
+	  (currently non-functioning) GUI in for SW settings defaults.  This is non-functioning until we
+	  come up with a way to copy the SW's defaults over to the user's widgets as they are created.

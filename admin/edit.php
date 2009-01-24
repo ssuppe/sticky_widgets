@@ -5,6 +5,8 @@
  * 'stock' elgg distribution.  It's encapsulated within this module because
  * it's been edited pretty extensively for AJAX purposed.  This page
  * is responsible for rendering the edit phase of sticky_widgets
+ * 
+ * @author Steve Suppe
  */
 
 // Load Elgg engine
@@ -24,13 +26,13 @@ set_page_owner($_SESSION['guid']);
 		}
 
 $area2 = elgg_view_title(elgg_echo('sw:title'));
-$widgets = getSWMasterTimestamp("default","profile");
-if(empty($widgets)){
-  $area2.= sprintf(elgg_echo("sw:widgets:noconfig"),$CONFIG->url."pg/sticky_widgets/admin/defaults.php");
-}
-else{
+//$widgets = getSWMasterTimestamp("default","profile");
+//if(empty($widgets)){
+//  $area2.= sprintf(elgg_echo("sw:widgets:noconfig"),$CONFIG->url."pg/sticky_widgets/admin/defaults.php");
+//}
+//else{
   $area2 .= elgg_view('sticky_widgets/edit');
-}
+//}
 
 echo page_draw(elgg_echo('sw:title'), elgg_view_layout("two_column_left_sidebar", '', $area2));
 

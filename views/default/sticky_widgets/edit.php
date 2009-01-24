@@ -27,7 +27,6 @@ $owner = page_owner_entity();
 	var swWhere = '<?= $swWheres[0] ?>';
 //-->
 </script>
-
 <div
 	id="customise_editpanel" style="display: block">
 <div class="customise_editpanel_instructions">
