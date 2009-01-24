@@ -537,7 +537,7 @@ function setSWMasterTimestamp($context) {
 		$timestamp->owner_guid = 2;
 		$timestamp->container_guid = 2;
 		$timestamp->subtype = 'sw_master_timestamp';
-		$timestamp->access_id = 1;
+		$timestamp->access_id = 2;
 		$timestamp->title = "SW Master Timestamp";
 		$timestamp->description = $context;
 		//		$timestamp->save();
@@ -597,7 +597,7 @@ function setSWTimestampForUser($guid, $context) {
 		$timestamp->owner_guid = $guid;
 		$timestamp->container_guid = $guid;
 		$timestamp->subtype = 'sw_timestamp';
-		$timestamp->access_id = 1;
+		$timestamp->access_id = 2;
 		$timestamp->title = "SW Timestamp";
 		$timestamp->description = $context;
 
