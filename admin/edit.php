@@ -24,7 +24,7 @@ set_page_owner($_SESSION['guid']);
 		}
 
 $area2 = elgg_view_title(elgg_echo('sw:title'));
-$widgets = get_sticky_widgets(2,"default","profile");
+$widgets = getSWMasterTimestamp("default","profile");
 if(empty($widgets)){
   $area2.= sprintf(elgg_echo("sw:widgets:noconfig"),$CONFIG->url."pg/sticky_widgets/admin/defaults.php");
 }

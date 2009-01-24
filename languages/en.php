@@ -8,6 +8,12 @@ $english = array(
 	'sw:title:defaults'=>"Widgets default config.",
     'sw:member:access'=>"User access configuration",
     'sw:widgets:noconfig'=>"You didn't configure the users <a href=\"%s\">default widgets configuration</a>. Please do it before assign widgets to the different areas.",
+
+	'sw:context:profile' => 'Profile',
+	'sw:context:dashboard' => 'Dashboard',
+	'sw:subtype:typeOrg' => "Organization",
+	'sw:subtype:typeUser' => "User"
+	
 );
 
 

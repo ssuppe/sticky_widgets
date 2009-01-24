@@ -11,23 +11,57 @@
 global $CONFIG;
 $widgets = sw_get_widget_types();
 
-//@todo Add support for extra subtypes
 ?>
+<div id="sticky-widgets-subtypes">
 
-<div id="sticky-widgets-defaults">
 <ul>
-	<li><a href="#profile"><?php echo elgg_echo('profile');?></a></li>
-	<li><a href="#dashboard"><?php echo elgg_echo('dashboard');?></a></li>
-</ul>
-<div id="profile"><?php echo elgg_view("sticky_widgets/defaults_config",array("context"=>"profile","widgets"=>$widgets));?>
-</div>
 
-<div id="dashboard"><?php echo elgg_view("sticky_widgets/defaults_config",array("context"=>"dashboard","widgets"=>$widgets));?>
+<?php
+
+foreach(getSWTypes() as $type) {
+
+	?>
+	<li><a href="#<?= $type ?>"><?php echo elgg_echo("sw:subtype:$type");?></a></li>
+	<?php } ?>
+</ul>
+
+	<?php
+
+	foreach(getSWTypes() as $type) {
+
+		?>
+
+<div id="<?= $type ?>">
+<ul>
+
+<?php
+
+foreach(getSWContexts() as $context) {
+
+	?>
+	<li><a href="#<?= $type  ?>-<?= $context ?>"><?php echo elgg_echo("sw:context:$context");?></a></li>
+	<?php } ?>
+</ul>
+
+	<?php
+
+	foreach(getSWContexts() as $context) {
+
+		?>
+<div id="<?= $type  ?>-<?= $context ?>"><?php echo elgg_view("sticky_widgets/defaults_config",array("swType" => $type, "context"=>$context,"widgets"=>$widgets));?>
 </div>
+		<?php } ?></div>
 </div>
+		<?php } ?>
+
 <script type="text/javascript">
 jQuery(document).ready(function(){
-    jQuery("#sticky-widgets-defaults > ul").tabs();
+    jQuery("#sticky-widgets-subtypes > ul").tabs();
+    <?php foreach(getSWTypes() as $type) { ?>
+   		 jQuery("#<?= $type ?> > ul").tabs();
+    <?php } ?>
+    
+    
 });
 
 </script>

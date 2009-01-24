@@ -74,10 +74,6 @@ function sw_page_handler($page)
           switch($page[1]) {
             default:
               $p = implode("/", $page);
-              //							for($i = 1; $i < sizeof($page); $i++) {
-              //								$p .= '/' . $page[$i];
-              //							}
-
               include($CONFIG->pluginspath . "sticky_widgets/" . $p);
               break;
           }

@@ -7,14 +7,16 @@
  * @package StickyWidgets
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
  * @author Diego Andrés Ramírez Aragón <diego@somosmas.org>
+ * @author Steve Suppe <ssuppe.elgg@gmail.com>
  */
 
 global $CONFIG;
 
 $context = $vars["context"];
+$swType = $vars["swType"];
 $widgets = $vars["widgets"];
 
-$sticky_widgets = get_sticky_widgets(2,"default",$context);
+$sticky_widgets = get_sticky_widgets(2,$swType,$context);
 if(!is_array($sticky_widgets)){
   $sticky_widgets = array();
 }
@@ -30,9 +32,9 @@ $new_handlers = array_diff($handlers,$existing);
 
 if(!empty($new_handlers)){
   foreach($new_handlers as $handler){
-    add_sticky_widget(2,"default", $handler,$context);
+    add_sticky_widget(2,$swType, $handler,$context);
   }
-  $sticky_widgets4 = get_sticky_widgets(2,"default",$context,0);
+  $sticky_widgets4 = get_sticky_widgets(2,$swType,$context,0);
   if(is_array($sticky_widgets4)){
     $sticky_widgets = array_merge($sticky_widgets,$sticky_widgets4);
   }
