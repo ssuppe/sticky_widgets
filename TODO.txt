@@ -1,0 +1,15 @@
+Configuración widgets
+================================
+[X] Obtener los widgets disponibles por tipo
+[X] Hacer vista de configuración (permitir configurar propiedades y nivel de acceso)
+
+Configurar layout general
+=========================
+[X] Si no esta la configuración de los widgets no permitir hacer este paso
+[X] Configurar layout por contexto
+[X] Actualizar el timestamp
+
+Configurar layout usuario
+=========================
+[X] Obtenere los widgets sticky con sus propiedades
+[X] Modificar la información de los widgets del usuario
