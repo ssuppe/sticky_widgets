@@ -26,7 +26,7 @@ function stickywidgets_init() {
 
 	// Extend system CSS with our own styles, which are defined in the messageboard/css view
 	extend_view('css','sticky_widgets/css');
-	extend_view("metatags","sticky_widgets/js");
+//	extend_view("metatags","sticky_widgets/js");
 	register_plugin_hook('container_permissions_check','object','sticky_widgets_container_permission_check');
 	register_plugin_hook('permissions_check','object','sticky_widgets_container_permission_check');
 
@@ -46,7 +46,8 @@ function sw_admin_pagesetup()
 	if (get_context() == 'admin' && isadminloggedin()) {
 		global $CONFIG;
 		add_submenu_item(elgg_echo('sw:title'), $CONFIG->wwwroot . 'pg/sticky_widgets/admin/edit.php',"s");
-		add_submenu_item(elgg_echo('sw:title:defaults'), $CONFIG->wwwroot . 'pg/sticky_widgets/admin/defaults.php',"s");
+		// This will allow editing of default settings of sticky widgets
+//		add_submenu_item(elgg_echo('sw:title:defaults'), $CONFIG->wwwroot . 'pg/sticky_widgets/admin/defaults.php',"s");
 	}
 }
 

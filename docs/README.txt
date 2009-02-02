@@ -31,7 +31,6 @@ really didn't want to add a user just for doing this.  Also, by doing it this wa
 believe I've gone a little further in ensuring that only admins have access to these
 objects.
 
-
 There seem to be no negative side-effects, other than that slightly-queasy feeling I
 get every time I save user-2-owned objects as a user who might not have GUID 2 :)
 
@@ -47,7 +46,11 @@ Disclaimer:  If it seems a bit convoluted, I apologize.  But this fills a 'busin
 (in that I needed subtyping without using Elgg's user->subType, but wanted to support it just
 in case).  If you have a better idea, please let me know.  What this means is that the GUI and
 this file may not accurately reflect each other, so please be careful.
-	
+
+Finally, there is a method called sw_shouldIgnoreContext that overrides widgets default behavior to
+only work in the context the widget developer specified.  I find this useful, I hope you do too.  If
+not, change it to return false and all will be well.
+
 PEANUT GALLERY
 Feel free to let me know about bugs, suggestions, critiques, complaints/kudos.  They will 
 most likely be followed up in that order :)
@@ -77,4 +80,9 @@ CHANGELOG
 0.6.3 : 25 Jan 2009 :
 	* Accepts many of Diego Andrés Ramírez Aragón's re-org modifications (thanks!) and also kept his
 	  (currently non-functioning) GUI in for SW settings defaults.  This is non-functioning until we
-	  come up with a way to copy the SW's defaults over to the user's widgets as they are created.
+	  come up with a way to copy the SW's defaults over to the user's widgets as they are created."
+	  
+0.6.4 : 2 Feb 2009 :
+	* Fixed a problem where titles of widgets weren't showing up due to an honoring of the widget's
+	  context restrictions.
+	* Fixed some misplaced HTML tags that will hopefully make the edit panel work correctly for people.

@@ -172,7 +172,7 @@ function sw_get_widget_types($widget_context = 'ignore') {
 		foreach($CONFIG->widgets->handlers as $key => $handler) {
 			if (!in_array('all',$handler->context) &&
 			!in_array($widget_context,$handler->context) &&
-			sw_shouldIgnore() != true) {
+			sw_shouldIgnoreContext() != true) {
 				unset($CONFIG->widgets->handlers[$key]);
 			}
 		}
@@ -185,7 +185,13 @@ function sw_get_widget_types($widget_context = 'ignore') {
 
 }
 
-function sw_shouldIgnore() {
+/**
+ * Convenience function, makes widgets work on any context (not just the ones the developer of
+ * the widget intended them for).
+ *
+ * @return unknown
+ */
+function sw_shouldIgnoreContext() {
 	return true;
 }
 

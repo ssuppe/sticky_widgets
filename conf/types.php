@@ -5,8 +5,6 @@
 	 * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.html GNU Public License version 2
 	 * @author Steve Suppe <ssuppe.elgg@gmail.com>
 	 */
-<?php
-
 /**
  * types.php
  *
@@ -45,7 +43,7 @@ function getSWContexts() {
  * @return unknown
  */
 function getSWTypes() {
-	return array('default');}
+	return array(elgg_echo('TYPE_ORG'), elgg_echo('TYPE_USER'));}
 
 /**
  * The most user-unfriendly bit of this code (I think).  If you have employed
@@ -62,7 +60,7 @@ function getSWTypes() {
  * @return unknown
  */
 function getSWSubtype() {
-	return 'default';
+	return 'serviceType';
 }
 
 /**
@@ -84,9 +82,15 @@ function getSWSubtype() {
  */
 function getStickyWidgetSet($type = 'default') {
 	switch($type) {
+		case elgg_echo('TYPE_ORG'):
+			return elgg_echo('TYPE_ORG');
+			break;
+		case elgg_echo('TYPE_USER'):
+			return elgg_echo('TYPE_USER');
+			break;
 		case 'default':
 		default:
-			return 'default';
+			return elgg_echo('TYPE_USER');
 	}
 
 }

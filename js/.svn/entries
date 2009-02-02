@@ -1,0 +1,40 @@
+8
+
+dir
+66
+http://localhost/svn/repository/Helper/mod/sticky_widgets/js
+http://localhost/svn/repository
+
+
+
+2009-01-24T22:36:32.480194Z
+66
+ssuppe
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+49a6c937-15dc-437a-b51b-ab9e8db1c7af
+
+ui.tabs.js
+file
+
+
+
+
+2009-01-23T13:38:28.000000Z
+09e98a9dff527501f3835921784f6415
+2009-01-24T22:36:32.480194Z
+66
+ssuppe
+

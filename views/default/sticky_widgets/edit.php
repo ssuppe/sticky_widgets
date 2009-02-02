@@ -42,6 +42,7 @@ $owner = page_owner_entity();
 
 <div id="customise_page_view">
 <h1><?= elgg_echo('sw:title:swtype')?></h1>
+<form>
 <span id="sticky_widgets_choices"> <?php
 
 foreach($swTypes as $t) {
@@ -58,7 +59,7 @@ foreach($swWheres as $w) {
 	<?= $w == $swWheres[0] ? "checked" : "" ?> /><?= $w ?> <?php
 }
 ?></span>
-
+</form>
 <table cellspacing="0">
 	<tr>
 		<td colspan="2" align="left" valign="top"><?php
